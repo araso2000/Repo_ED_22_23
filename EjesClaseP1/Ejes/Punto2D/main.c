@@ -6,4 +6,5 @@ int main(){
     imprimir(punto1);
     punto1 = desplazar(punto1, -2.4, 1.0);
     imprimir(punto1);
+    printf("Distancia al origen: %f\n\n", calcularDistanciaOrigen(punto1));
 }
