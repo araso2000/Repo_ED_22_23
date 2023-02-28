@@ -1,31 +1,28 @@
 #include "ListaEnlazada.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 Nodo* getNodo(ListaEnlazada *lista, int posicion){
     assert(lista != NULL);
-    assert(posicion <= lista->tamActual);
+    assert(posicion >= 0 && posicion <= lista->tamActual);
 
     if(posicion == 0){
         return(lista->primerNodo);
     }else{
-        Nodo *siguiente = lista->primerNodo;
+        Nodo *actual = lista->primerNodo;
 
-        for(int ii=0;ii<posicion-1;ii++){
-            siguiente = siguiente->siguiente;
+        for(int ii=0;ii<posicion;ii++){
+            actual = actual->siguiente;
         }        
 
-        return(siguiente);
+        return(actual);
     }
 }
 
 ListaEnlazada* constructor(){
-    Nodo *primero;
-    primero->elemento = 0;
-    primero->siguiente = NULL;
-
-    ListaEnlazada *lista;
-    lista->primerNodo = primero;
+    ListaEnlazada *lista = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+    lista->primerNodo = NULL;
     lista->tamActual = 0;
 
     return(lista);
@@ -46,28 +43,35 @@ int getValor(Nodo *nodo){
 void insertar(ListaEnlazada *lista, int posicion, int numero){
     assert(lista != NULL);
     assert(posicion <= lista->tamActual);
-
-    Nodo *nuevo;
+    
+    Nodo *nuevo = (Nodo*)malloc(sizeof(Nodo));
     nuevo->elemento = numero;
 
-    Nodo *anteriorActual = getNodo(lista, posicion-1);
-    Nodo *actual = anteriorActual->siguiente;
-
+    if(posicion == 0){
+        nuevo->siguiente = lista->primerNodo;
+        lista->primerNodo = nuevo;
+    }else{
+        Nodo *anterior = getNodo(lista, posicion-1);
+        nuevo->siguiente = anterior->siguiente;   
+        anterior->siguiente = nuevo;
+    }
     lista->tamActual++;
-
-    anteriorActual->siguiente = nuevo;
-    nuevo->siguiente = actual;
 }
 
 void eliminar(ListaEnlazada *lista, int posicion){
     assert(lista != NULL);
     assert(posicion <= lista->tamActual);
 
-    Nodo *anteriorActual = getNodo(lista, posicion-1);
-    Nodo *actual = anteriorActual->siguiente;
+    Nodo *actual = getNodo(lista, posicion);
 
-    anteriorActual->siguiente=actual->siguiente;
+    if(posicion == 0){
+        lista->primerNodo = actual->siguiente;
+    }else{
+        Nodo *anteriorActual = getNodo(lista, posicion-1);
 
+        anteriorActual->siguiente=actual->siguiente;
+    }
+    
     lista->tamActual--;
 
     free(actual);
@@ -76,9 +80,11 @@ void eliminar(ListaEnlazada *lista, int posicion){
 void destructor(ListaEnlazada *lista){
     assert(lista != NULL);
 
-    for(int ii=0;ii<lista->tamActual-1;ii++){
-        free(lista->primerNodo->siguiente);
+    Nodo *actual = lista->primerNodo;
+    while(actual != NULL) {
+        Nodo *siguiente = actual->siguiente;
+        free(actual);
+        actual = siguiente;
     }
-    free(lista->primerNodo);
     free(lista);
 }

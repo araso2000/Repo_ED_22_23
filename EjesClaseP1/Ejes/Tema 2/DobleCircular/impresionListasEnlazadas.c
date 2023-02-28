@@ -1,7 +1,7 @@
-#include "ListaEnlazada.h"
+#include "ListaDobleEnlazada.h"
 #include <stdio.h>
 
-void imprimir(ListaEnlazada *lista){
+void imprimir(ListaDobleEnlazada *lista){
     
     printf("Tam Lista: %d -> ",lista->tamActual);
     
