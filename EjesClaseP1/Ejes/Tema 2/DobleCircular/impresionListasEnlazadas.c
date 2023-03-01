@@ -12,7 +12,7 @@ void imprimir(ListaDobleEnlazada *lista){
     }else{
         for(int ii=0 ; ii < lista->tamActual ; ii++){
             
-            printf("%d",getValor(getNodo(lista,ii)));
+            printf("%d",getValor(lista,ii));
             
             if(ii != lista->tamActual-1){
                 printf(", ");

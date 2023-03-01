@@ -19,9 +19,9 @@ ListaDobleEnlazada* constructor();
 
 Nodo* getNodo(ListaDobleEnlazada *lista, int posicion);
 
-void setValor(Nodo *nodo, int numero);
+void setValor(ListaDobleEnlazada *lista, int posicion, int nuevoNum);
 
-int getValor(Nodo *nodo);
+int getValor(ListaDobleEnlazada *lista, int posicion);
 
 void insertar(ListaDobleEnlazada *lista, int posicion, int numero);
 

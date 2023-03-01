@@ -15,9 +15,11 @@ ListaDobleEnlazada* constructor(){
 
 Nodo* getNodo(ListaDobleEnlazada *lista, int posicion){
     assert(lista != NULL);
-    assert(posicion >= 0 && posicion <= lista->tamActual);
+    assert(lista->tamActual > 0);
+    assert(posicion >= 0);
+    assert(posicion <= lista->tamActual - 1);
 
-    Nodo *devolver;
+    Nodo *devolver = NULL;
 
     if(posicion == 0){
         devolver = lista->primerNodo;
@@ -28,21 +30,20 @@ Nodo* getNodo(ListaDobleEnlazada *lista, int posicion){
     }else if(posicion == lista->posLastNodo + 1){
         devolver = lista->lastNodo->siguiente; 
 
+    }else if(posicion == lista->posLastNodo){
+        devolver = lista->lastNodo;
     }else{
-
-        Nodo *actual = lista->primerNodo;
-        
         if(posicion < (lista->tamActual - posicion)){
+            devolver = lista->primerNodo;
             for(int ii=0;ii<posicion;ii++){
-                actual = actual->siguiente;
+                devolver = devolver->siguiente;
             } 
         }else{
-             for(int ii=0;ii<(lista->tamActual - posicion);ii++){
-                actual = actual->anterior;
+            devolver = lista->primerNodo->anterior;
+             for(int ii=lista->tamActual - 1;ii>posicion;ii--){
+                devolver = devolver->anterior;
             }   
         }
-        
-        devolver = actual;
     }
     lista->lastNodo = devolver;
     lista->posLastNodo = posicion;
@@ -50,16 +51,24 @@ Nodo* getNodo(ListaDobleEnlazada *lista, int posicion){
     return(devolver);
 }
 
-void setValor(Nodo *nodo, int numero){
-    assert(nodo != NULL);
+void setValor(ListaDobleEnlazada *lista, int posicion, int nuevoNum){
+    assert(lista != NULL);
+    assert(lista->tamActual > 0);
+    assert(posicion >= 0);
+    assert(posicion <= lista->tamActual - 1);
 
-    nodo->elemento = numero;
+    getNodo(lista,posicion)->elemento = nuevoNum;
 }
 
-int getValor(Nodo *nodo){
-    assert(nodo != NULL);
+int getValor(ListaDobleEnlazada *lista, int posicion){
+    assert(lista != NULL);
+    assert(lista->tamActual > 0);
+    assert(posicion >= 0);
+    assert(posicion <= lista->tamActual - 1);
 
-    return(nodo->elemento);
+    Nodo *resultado = getNodo(lista, posicion);
+
+    return(resultado->elemento);
 }
 
 void insertar(ListaDobleEnlazada *lista, int posicion, int numero){
@@ -73,67 +82,53 @@ void insertar(ListaDobleEnlazada *lista, int posicion, int numero){
             nuevo->siguiente = nuevo;
             nuevo->anterior = nuevo;
     }else{
-         if(posicion == 0){ //Si es al principio
-            nuevo->siguiente = lista->primerNodo;
-            nuevo->anterior = lista->primerNodo->anterior;
-            lista->primerNodo->anterior->siguiente = nuevo;
-            lista->primerNodo->anterior = nuevo;
-    
-            lista->primerNodo = nuevo;
-
-        }else if(posicion == lista->tamActual){ //Si es al final
-            Nodo *ultimo = getNodo(lista,posicion);
-
-            ultimo->siguiente = nuevo;
-            nuevo->anterior = ultimo;
-            nuevo->siguiente = lista->primerNodo;
-            lista->primerNodo->anterior = nuevo;
-
-        }else{ //Si es en medio
-            Nodo *actual = getNodo(lista,posicion);
-
-            actual->anterior->siguiente = nuevo;
-            nuevo->anterior = actual->anterior;
-            actual->anterior = nuevo;
-            nuevo->siguiente = actual;
+        Nodo *nuevoSiguiente;
+        if(posicion == lista->tamActual){ //Si es la ultima posicion de la lista
+            nuevoSiguiente = lista->primerNodo;
+        }else{
+            nuevoSiguiente = getNodo(lista,posicion);
         }
+
+        Nodo *nuevoAnterior = nuevoSiguiente->anterior;
+
+        nuevo->anterior = nuevoAnterior;
+        nuevo->siguiente = nuevoSiguiente;
+
+        nuevoSiguiente->anterior = nuevo;
+        nuevoAnterior->siguiente = nuevo;
     }
+    
+    if(posicion == 0){//Si lo insertamos al principio
+        lista->primerNodo = nuevo;
+    }
+
     lista->tamActual++;
-    lista->lastNodo = nuevo;
-    lista->posLastNodo = posicion;
+    lista->lastNodo = NULL;
+    lista->posLastNodo = -1;
 }
 
 void eliminar(ListaDobleEnlazada *lista, int posicion){
     assert(lista != NULL);
-    assert(posicion <= lista->tamActual);
     assert(lista->tamActual > 0);
+    assert(posicion >= 0);
+    assert(posicion <= lista->tamActual - 1);
 
     Nodo *actual = getNodo(lista, posicion);
 
     if(lista->tamActual == 1){ //Si la lista solo tiene un solo elemento
         lista->primerNodo = NULL;
     }else{ //Si tiene más de uno
-        if(posicion == 0){ //Si es el primer nodo
-            Nodo *anterior = lista->primerNodo->anterior;
-            Nodo *siguiente = lista->primerNodo->siguiente;
+        Nodo *anterior = actual->anterior;
+        Nodo *siguiente = actual->siguiente;
 
-            anterior->siguiente = siguiente;
-            siguiente->anterior=anterior;
+        anterior->siguiente = siguiente;
+        siguiente->anterior = anterior;
 
+        if(posicion == 0){
             lista->primerNodo = siguiente;
-        
-        }else if(posicion == lista->tamActual){ //Si es el ultimo nodo
-            lista->primerNodo->anterior = actual->anterior;
-            actual->anterior->siguiente = lista->primerNodo;
+        }  
+    }              
 
-        }else{ //Si es un nodo del medio
-            Nodo *anterior = actual->anterior;
-            Nodo *siguiente = actual->siguiente;
-
-            anterior->siguiente = siguiente;
-            siguiente->anterior = anterior;
-        }
-    }
     lista->tamActual--;
     lista->lastNodo = NULL;
     lista->posLastNodo = -1;
@@ -142,13 +137,10 @@ void eliminar(ListaDobleEnlazada *lista, int posicion){
 }
 
 void destructor(ListaDobleEnlazada *lista){
-    assert(lista != NULL);
+    assert(lista != NULL && lista->tamActual >= 0);
 
-    Nodo *actual = lista->primerNodo;
-    while(actual != NULL) {
-        Nodo *siguiente = actual->siguiente;
-        free(actual);
-        actual = siguiente;
+    while(lista->tamActual > 0) {
+        eliminar(lista,0);
     }
     free(lista);
 }
@@ -160,7 +152,7 @@ void concatenar(ListaDobleEnlazada *lista1, ListaDobleEnlazada *lista2){
 	assert(lista2->tamActual >= 0);
 
     for(int ii = 0 ; ii < lista2->tamActual ; ii++){
-        insertar(lista1,lista1->tamActual,getValor(getNodo(lista2,ii)));
+        insertar(lista1,lista1->tamActual,getValor(lista2,ii));
     }
 }
 
@@ -171,7 +163,7 @@ int buscar(ListaDobleEnlazada *lista, int elemento){
     int posicion = -1;
 
     for(int ii = 0 ; ii < lista->tamActual ; ii++){
-        if(getValor(getNodo(lista,ii)) == elemento){
+        if(getValor(lista,ii) == elemento){
             posicion = ii;
             break;
         }
