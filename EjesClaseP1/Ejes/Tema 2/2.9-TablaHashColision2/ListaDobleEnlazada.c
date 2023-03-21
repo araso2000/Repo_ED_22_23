@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-ListaDobleEnlazada* constructor(){
+ListaDobleEnlazada* constructorLista(){
     ListaDobleEnlazada *lista = (ListaDobleEnlazada*)malloc(sizeof(ListaDobleEnlazada));
     lista->primerNodo = NULL;
     lista->tamActual = 0;
@@ -51,16 +51,16 @@ Nodo* getNodo(ListaDobleEnlazada *lista, int posicion){
     return(devolver);
 }
 
-void setValor(ListaDobleEnlazada *lista, int posicion, int nuevoNum){
+void setValor(ListaDobleEnlazada *lista, int posicion, Estudiante student){
     assert(lista != NULL);
     assert(lista->tamActual > 0);
     assert(posicion >= 0);
     assert(posicion <= lista->tamActual - 1);
 
-    getNodo(lista,posicion)->elemento = nuevoNum;
+    getNodo(lista,posicion)->elemento = student;
 }
 
-int getValor(ListaDobleEnlazada *lista, int posicion){
+Estudiante getValor(ListaDobleEnlazada *lista, int posicion){
     assert(lista != NULL);
     assert(lista->tamActual > 0);
     assert(posicion >= 0);
@@ -71,12 +71,12 @@ int getValor(ListaDobleEnlazada *lista, int posicion){
     return(resultado->elemento);
 }
 
-void insertar(ListaDobleEnlazada *lista, int posicion, int numero){
+void insertarLista(ListaDobleEnlazada *lista, int posicion, Estudiante student){
     assert(lista != NULL && lista->tamActual >= 0);
     assert(posicion <= lista->tamActual && posicion >= 0);
     
     Nodo *nuevo = (Nodo*)malloc(sizeof(Nodo));
-    nuevo->elemento = numero;
+    nuevo->elemento = student;
 
     if(lista->tamActual == 0){
             nuevo->siguiente = nuevo;
@@ -107,7 +107,7 @@ void insertar(ListaDobleEnlazada *lista, int posicion, int numero){
     lista->posLastNodo = -1;
 }
 
-void eliminar(ListaDobleEnlazada *lista, int posicion){
+void eliminarLista(ListaDobleEnlazada *lista, int posicion){
     assert(lista != NULL);
     assert(lista->tamActual > 0);
     assert(posicion >= 0);
@@ -136,11 +136,11 @@ void eliminar(ListaDobleEnlazada *lista, int posicion){
     free(actual);
 }
 
-void destructor(ListaDobleEnlazada *lista){
+void destructorLista(ListaDobleEnlazada *lista){
     assert(lista != NULL && lista->tamActual >= 0);
 
     while(lista->tamActual > 0) {
-        eliminar(lista,0);
+        eliminarLista(lista,0);
     }
     free(lista);
 }
@@ -152,18 +152,18 @@ void concatenar(ListaDobleEnlazada *lista1, ListaDobleEnlazada *lista2){
 	assert(lista2->tamActual >= 0);
 
     for(int ii = 0 ; ii < lista2->tamActual ; ii++){
-        insertar(lista1,lista1->tamActual,getValor(lista2,ii));
+        insertarLista(lista1,lista1->tamActual,getValor(lista2,ii));
     }
 }
 
-int buscar(ListaDobleEnlazada *lista, int elemento){
+int buscarLista(ListaDobleEnlazada *lista, Estudiante student){
     assert(lista != NULL);
 	assert(lista->tamActual >= 0);
 
     int posicion = -1;
 
     for(int ii = 0 ; ii < lista->tamActual ; ii++){
-        if(getValor(lista,ii) == elemento){
+        if(getValor(lista,ii).matricula == student.matricula){
             posicion = ii;
             break;
         }

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "listaenlazada.h": "c",
-        "listadobleenlazada.h": "c"
+        "listadobleenlazada.h": "c",
+        "stdlib.h": "c"
     }
 }
