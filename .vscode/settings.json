@@ -5,6 +5,8 @@
         "stdlib.h": "c",
         "listacontigua.h": "c",
         "stdbool.h": "c",
-        "monticulo.h": "c"
+        "monticulo.h": "c",
+        "vector": "c",
+        "iosfwd": "c"
     }
 }
