@@ -49,13 +49,13 @@ void destructorRecursivo(ArbolBinarioBusqueda *arbol, Nodo *raiz){
     Nodo *padre = raiz->padre;
 
     if(padre != NULL){ //Si la raiz tiene padre
-        if(padre->hijoIzquierdo == raiz){ //Si la raiz es el hijo derecho de su padre, le quitamos la referencia
+        if(padre->hijoIzquierdo == raiz){ //Si la raiz es el hijo izquierdo de su padre, le quitamos la referencia
             padre->hijoIzquierdo = NULL;
         }
-        if(padre->hijoDerecho == raiz){ //Si es el hijo izquierdo haremos lo mismo
+        if(padre->hijoDerecho == raiz){ //Si es el hijo derecho haremos lo mismo
             padre->hijoDerecho = NULL;
         }
-    }else{ //Si no tiene padre pues borramos la raiz del arbol
+    }else{ //Si no tiene padre será la raiz del arbol
         arbol->raiz = NULL;
     }
 
@@ -119,6 +119,7 @@ void insertarElemento(ArbolBinarioBusqueda *arbol, int elemento){
     if(arbol->n == 0){
         arbol->raiz = nuevoNodo;
     }else{ //Si el arbol no está vacio
+        //Buscamos su posible padre osea donde deberemos insertarlo
         Nodo *posiblePadre = buscarRecursivo(arbol->raiz,elemento);
 
         if(elemento < posiblePadre->elemento){ //Si es menor que su padre será su nuevo hijo izquierdo

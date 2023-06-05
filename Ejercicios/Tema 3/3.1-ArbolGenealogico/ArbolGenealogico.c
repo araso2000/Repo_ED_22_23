@@ -39,21 +39,25 @@ Nodo* getHijoDirecto(Nodo *nodo, int num){
 Nodo* buscarRecursivo(Nodo *nodo, char *nombre){
     assert(nombre != NULL);
 
+    //Si el nodo es vacío o el nombre buscado y el del nodo son IGUALES
     if(nodo == NULL || strcmp(nodo->nombre,nombre) == 0){
-        return(nodo);
+        return(nodo); //Devolvemos el nodo ya que es ese
     }
 
+    //Si no se cumple lo anterior, empezamos buscando por el primer hijo
     Nodo *temp;
     temp = buscarRecursivo(nodo->primerHijo, nombre);
 
+    //Si el primer hijo es el nodo buscado, lo devolvemos
     if(temp != NULL){
         return(temp);
     }
 
+    //Si no es el primer hijo, buscaremos hermano por hermano
     Nodo *hermano = nodo->hermanoDerecho;
     while(hermano != NULL){
         temp = buscarRecursivo(hermano,nombre);
-
+        //Si no es nulo, significa que lo hemos encontrado asi que lo devolvemos
         if(temp != NULL){
             return(temp);
         }
@@ -87,12 +91,14 @@ void eliminarRecursivo(Nodo *nodo){
     for(int ii=0; ii<numHijosDirectos(nodo)-1; ii++){
         temp = getHijoDirecto(nodo,ii);
 
+        //Si es el primer hijo, osea posicion 0, el padre perderá su primer hijo
         if(ii == 0){
             temp->padre->primerHijo = NULL;
         }else{
+            //Si es otro hijo, diremos que su hermano derecho ya no existe
             getHijoDirecto(nodo, ii - 1)->hermanoDerecho = NULL;
         } 
-
+        //Vamos llamando con todos los hijos de un padre
         eliminarRecursivo(temp);
     }
 
@@ -118,6 +124,7 @@ ArbolGenealogico* constructor(char *nombre){
 
 void insertar(ArbolGenealogico *arbol, char *nombre, char *padre){
     assert(padre != NULL);
+    //Buscamos a su padre
     Nodo *nodoPadre = buscarRecursivo(arbol->raiz,padre);
     assert(nodoPadre != NULL);
     assert(nombre != NULL);
@@ -129,10 +136,11 @@ void insertar(ArbolGenealogico *arbol, char *nombre, char *padre){
     nuevo->primerHijo = NULL;
 
     int numHijos = numHijosDirectos(nodoPadre);
-
+    //Si es su primer hijo
     if(numHijos == 0){
         nodoPadre->primerHijo = nuevo;
     }else{
+        //Si es otro hijo, obtenemos el ultimo hijo y le metemos como su hermano derecho
         getHijoDirecto(nodoPadre,numHijos-1)->hermanoDerecho = nuevo;
     }
 }

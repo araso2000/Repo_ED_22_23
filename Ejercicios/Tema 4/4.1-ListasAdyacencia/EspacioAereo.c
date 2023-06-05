@@ -13,6 +13,7 @@ bool existeAeropuerto(ListaContigua *grafo, char *nombre){
     Aeropuerto temporal;
     strcpy(temporal.nombre,nombre);
 
+    //Usamos métodos de la lista contigua
     if(buscarContigua(temporal,grafo) == -1){
         return false;
     }else{

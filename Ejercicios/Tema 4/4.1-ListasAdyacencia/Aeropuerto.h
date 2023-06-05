@@ -3,8 +3,8 @@
 
 typedef struct Aeropuerto{ //Nodo
     char nombre[20];
-    struct ListaDobleEnlazada *salientes;
-    struct ListaDobleEnlazada *entrantes;
+    ListaDobleEnlazada *salientes;
+    ListaDobleEnlazada *entrantes;
 }Aeropuerto;
 
 typedef struct Ruta{ //Arco

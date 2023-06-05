@@ -83,7 +83,7 @@ void insertarNodo(Matriz *grafo, char nombreNodo){
     nuevoNombre[0] = nombreNodo;
     nuevoNombre[1] = '\0';
 
-    //Lo insertamos en el grafo pero antes deberemos realocar espacio para poder almacenarlo
+    //Lo insertamos en el grafo pero antes deberemos reasignar espacio para poder almacenarlo
     //Osea conseguimos 2 espacios nuevos, los justos para que entre nuevoNombre
     grafo->nombresNodos = (char*)realloc(grafo->nombresNodos, sizeof(char) * (grafo->n + 2));
     //Concatenamos el nuevoNombre en nombresNodos
@@ -191,4 +191,60 @@ void imprimir(Matriz *grafo){
 		}
 		printf("\n");
 	}
+}
+
+char* recorrerEnProfundidadRecursivo(Matriz *grafo, int indiceNodoInicial, int* vistos) {
+	assert(grafo != NULL && grafo->n >= 0); // El grafo tiene sentido
+	assert(indiceNodoInicial >= 0 && indiceNodoInicial <= grafo->n - 1);
+	assert(vistos != NULL);
+
+	// Creamos el array resultado y metemos en él el nombre del nodo inicial
+	char *resultado = (char*)malloc(sizeof(char)*(grafo->n+1)); // Resultado que contendrá el recorrido
+	char nombreNodoInicial = grafo->nombresNodos[indiceNodoInicial];
+	resultado[0] = nombreNodoInicial;
+	resultado[1] = '\0';
+
+	// Marcamos el nodo inicial como visto
+	vistos[indiceNodoInicial] = 1; 
+
+	// Vemos los nodos inmediatamente consecutivos al inicial y nos llamamos recursivamente
+	// con cualquiera de ellos que aún no hayamos visto
+	for (int indiceNodoDestino = 0; indiceNodoDestino < grafo->n; indiceNodoDestino++) {
+
+		// Si el posible nodo consecutivo no está aún visto
+		if (vistos[indiceNodoDestino] == 0) {
+
+			// Si existe un arco del nodo origen al nodo destino "no visto", nos llamamos recursivamente
+			// con el nodo destino como nuevo origen
+			char nombreNodoDestino = grafo->nombresNodos[indiceNodoDestino];
+			if (existeArco(grafo, nombreNodoInicial, nombreNodoDestino)) {
+				char* recorridoRestante = recorrerEnProfundidadRecursivo(grafo, indiceNodoDestino, vistos);
+				strcat(resultado, recorridoRestante);
+				free(recorridoRestante);
+			}
+		}
+	}
+	return (resultado);
+}
+
+char* recorrerEnProfundidad(Matriz *grafo, char nodoInicial) {
+	assert(grafo != NULL && grafo->n >= 0); // El grafo tiene sentido
+	assert(existeNodo(grafo, nodoInicial));
+
+	// Indice del nodo inicial
+	int indiceNodoInicial = obtenerIndice(grafo, nodoInicial);
+
+	// Creamos el array que nos dice si un nodo ha sido visto o no, y lo inicializamos a falso
+	int* vistos = (int*)malloc(sizeof(int) * grafo->n); // Array que nos dice si un nodo ha sido visto o no
+	for (int i = 0; i < grafo->n; i++) vistos[i] = 0;
+
+	// Recorremos en profundidad el grafo y guardamos el tamaño del recorrido
+	char *resultado = recorrerEnProfundidadRecursivo(grafo, indiceNodoInicial, vistos);
+	int longitudRecorrido = strlen(resultado); // Numero de nodos que tiene el recorrido
+
+	// Liberamos el array de vistos
+	free(vistos);
+
+	// Devolvemos el recorrido
+	return (resultado); // Devolvemos el array de caracteres resultado del recorrido en profundidad
 }

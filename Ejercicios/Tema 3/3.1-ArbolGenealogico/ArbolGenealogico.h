@@ -9,7 +9,7 @@ typedef struct Nodo{
     struct Nodo *hermanoDerecho;
 }Nodo;
 
-typedef struct{
+typedef struct ArbolGenealogico{
     Nodo *raiz;
     int tam;
 }ArbolGenealogico;

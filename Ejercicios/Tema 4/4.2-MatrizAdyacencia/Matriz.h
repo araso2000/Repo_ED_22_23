@@ -20,7 +20,7 @@ bool existeNodo(Matriz* grafo, char nombreNodo);
 
 bool existeArco(Matriz *grafo, char nombreNodoOrigen, char nombreNodoDestino);
 
-Matriz *construirMatriz();
+Matriz* construirMatriz();
 
 void destruirMatriz(Matriz* grafo);
 
@@ -33,3 +33,7 @@ void borrarNodo(Matriz *grafo, char nombreNodo);
 void borrarArco(Matriz *grafo, char nodoOrigen, char nodoDestino);
 
 void imprimir(Matriz *grafo);
+
+char* recorrerEnProfundidadRecursivo(Matriz *grafo, int indiceNodoInicial, int *vistos);
+
+char* recorrerEnProfundidad(Matriz *grafo, char nodoInicial);

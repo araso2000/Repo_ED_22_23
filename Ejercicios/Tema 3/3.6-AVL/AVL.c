@@ -124,12 +124,12 @@ void actualizarAlturaYFactorDeEquilibrio(Nodo *nodo){
 
     int alturaHijoIzquierdo = -1; //-1 significa que no existe
     if(nodo->hijoIzquierdo != NULL){ //Altura del hijo izquierdo si existe
-        nodo->hijoIzquierdo->altura;
+        alturaHijoIzquierdo = nodo->hijoIzquierdo->altura;
     }
 
     int alturaHijoDerecho = -1;
     if(nodo->hijoDerecho != NULL){ //Altura del hijo derecho si existe
-        nodo->hijoDerecho->altura;
+        alturaHijoDerecho = nodo->hijoDerecho->altura;
     }
 
     //Calculamos segun la teoria la altura del nodo pasado por parametro
@@ -142,6 +142,7 @@ void actualizarAlturaYFactorDeEquilibrio(Nodo *nodo){
     nodo->factorEquilibrio = (alturaHijoDerecho - alturaHijoIzquierdo);
 }
 
+//Método básico para darle hijos a un padre y configurar ese nodo
 void setHijo(Nodo *padre, Nodo *nuevoHijo, int lado){
     assert(padre != NULL);
     assert(lado == 0 | lado == 1); // 0 = derecho / 1 = izquierdo
@@ -168,8 +169,8 @@ void cambiarHijo(AVL *arbol, Nodo *antiguoHijo, Nodo *nuevoHijo){
         arbol->raiz = nuevoHijo;
         nuevoHijo->padre = NULL;
     }else{ //Si sí tiene padre
-        if (padre->hijoDerecho == antiguoHijo){ //Si tenia hijo derecho,ahora será el nuevo hijo
-            setHijo(padre, nuevoHijo, 0); 
+        if (padre->hijoDerecho == antiguoHijo){ //Si es el hijo derecho el cambio
+            setHijo(padre, nuevoHijo, 0); //Diremos al metodo anterior que realice el cambio 
         }
 		if (padre->hijoIzquierdo == antiguoHijo){ //Igual con el hijo izquierdo
             setHijo(padre, nuevoHijo, 1);
@@ -352,16 +353,16 @@ Nodo* insertarHoja(AVL* arbol, int nuevoElemento){
 	// Si el arbol está vacío, lo metemos en la raiz sí o sí
 	if (arbol->n == 0) {
 		arbol->raiz = nuevoNodo;
-	}
-
-	// En caso contrario, buscamos el hueco en donde meterlo como una hoja
-	else {
+	}else { // En caso contrario, buscamos el hueco en donde meterlo como una hoja
 		// Buscamos el hueco
 		Nodo* padreDelHueco = buscarRecursivo(arbol->raiz, nuevoElemento); // Puntero al nodo que es el padre del hueco
 
 		// Metemos el nuevo nodo como hijo izquierdo o derecho
-		if (nuevoElemento < padreDelHueco->contenido) setHijo(padreDelHueco, nuevoNodo, 1);
-		else setHijo(padreDelHueco, nuevoNodo, 0);
+		if (nuevoElemento < padreDelHueco->contenido){ //Si es menor, irá a la izquierda
+			setHijo(padreDelHueco, nuevoNodo, 1);
+		}else{
+			setHijo(padreDelHueco, nuevoNodo, 0);
+		}
 	}
 
 	// Incrementamos el número de nodos
@@ -390,15 +391,23 @@ void reequilibrar(AVL *arbol, Nodo* hoja){
 		// Si el factor de equilibrio es 2, tenemos dos casos
 		if (factorEquilibrio == 2) {
 			int factorEquilibrioDerecho = nodoActual->hijoDerecho->factorEquilibrio;
-			if (factorEquilibrioDerecho == 1) nodoActual = rotarSimpleIzquierda(arbol, nodoActual);
-			if (factorEquilibrioDerecho == -1) nodoActual = rotarCompuestaDerechaIzquierda(arbol, nodoActual);
+			if (factorEquilibrioDerecho == 1){
+				nodoActual = rotarSimpleIzquierda(arbol, nodoActual);
+			}
+			if (factorEquilibrioDerecho == -1){
+				nodoActual = rotarCompuestaDerechaIzquierda(arbol, nodoActual);
+			}
 		}
 
 		// Si el factor de equilibrio es -2, tenemos otros dos casos
 		if (factorEquilibrio == -2) {
 			int factorEquilibrioIzquierdo = nodoActual->hijoIzquierdo->factorEquilibrio;
-			if (factorEquilibrioIzquierdo == -1) nodoActual = rotarSimpleDerecha(arbol, nodoActual);
-			if (factorEquilibrioIzquierdo == 1) nodoActual = rotarCompuestaIzquierdaDerecha(arbol, nodoActual);
+			if (factorEquilibrioIzquierdo == -1){
+				nodoActual = rotarSimpleDerecha(arbol, nodoActual);
+			}
+			if (factorEquilibrioIzquierdo == 1){
+				nodoActual = rotarCompuestaIzquierdaDerecha(arbol, nodoActual);
+			}
 		}
 
 		// En la siguiente iteracion, haremos lo mismo con el padre del nodo actual
